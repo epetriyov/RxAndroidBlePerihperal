@@ -1,0 +1,57 @@
+apply plugin: 'com.android.library'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+apply plugin: 'kotlin-kapt'
+
+apply plugin: 'maven-publish'
+
+android {
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation "com.android.support:support-annotations:27.0.2"
+    compileOnly 'io.reactivex:rxjava:1.3.2'
+    implementation 'com.google.dagger:dagger:2.12'
+    kapt 'com.google.dagger:dagger-compiler:2.12'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'io.reactivex:rxjava:1.3.2'
+    testImplementation 'org.mockito:mockito-core:2.13.0'
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    include('com/petriyov/rxandroidble/Exceptions.kt')
+    include('com/petriyov/rxandroidble/RxBleServer.kt')
+    include('com/petriyov/rxandroidble/RxBleServerConnection.kt')
+    classifier = 'sources'
+}
+
+publishing.publications {
+    mavenJava(MavenPublication) {
+        artifactId 'ble-peripheral'
+        groupId 'com.petriyov.rxandroid'
+        artifact("$rootDir/app/build/outputs/aar/app-release.aar")
+        artifact sourcesJar
+    }
+}
